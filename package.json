@@ -1,0 +1,9 @@
+{
+	"name": "pidFileLister",
+	"description": "list pid files of apps",
+	"version": "0.0.1",
+	"private": true,
+	"dependencies": {
+		"underscore": "*"
+	}
+}
