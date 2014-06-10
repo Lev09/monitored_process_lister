@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var fs = require('fs');
 
 var mainDir = '/tmp/process-manager';
@@ -11,13 +12,11 @@ fs.readdir(mainDir, function(error, folders) {
 });
 
 var createTree = function(folders) {
-	for (i = 0; i < folders.length; i++) {
-		var folder = folders[i];
-		readFileNames(folder,
-			function(folderName, fileNames) {
-				apps.push({id: folderName, pids: fileNames});								
-			});
-	}
+	_.each(folders, function(folder) {
+		readFileNames(folder,function(folderName, fileNames) {
+			apps.push({id: folderName, pids: fileNames});								
+		});
+	});
 };
 
 var readFileNames = function(folderName, done) {
