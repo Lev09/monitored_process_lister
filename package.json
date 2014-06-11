@@ -1,9 +1,10 @@
 {
-	"name": "pidFileLister",
-	"description": "list pid files of apps",
+	"name": "monitoredProcessLister",
+	"description": "list processes of apps",
 	"version": "0.0.1",
 	"private": true,
 	"dependencies": {
-		"underscore": "*"
+		"underscore": "*",
+		"zmq": "*"
 	}
 }
