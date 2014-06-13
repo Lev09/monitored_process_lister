@@ -9,7 +9,7 @@ publisher.bind('tcp://*:5555', function(error) {
 		process.exit(0);
 	}
 	else {
-		console.log("Binding on port 5555...");
+		console.log("Binding on port: 5555");
 	}
 });
 
@@ -43,12 +43,12 @@ var getMonitoredProcesses = function(sendList) {
 
 	setTimeout(function() {
 		sendList(apps);
-	}, 3000);
+	}, 5000);
 	
 };
 
 setInterval(function() {
-	getMonitoredProcesses(function(monitoredList) {		
+	getMonitoredProcesses(function(monitoredList) {
 		publisher.send(JSON.stringify(monitoredList));
 	});
-}, 10000);
+}, 60000);
