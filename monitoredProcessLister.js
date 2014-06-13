@@ -2,56 +2,53 @@ var zmq = require('zmq');
 var fs = require('fs');
 var _ = require('underscore');
 
-var responder = zmq.socket('rep');
-
-responder.on('message', function(request) {
-	console.log('request from client: ' + request.toString());
-	
-	getMonitoredProcesses(function(monitoredList) {		
-		responder.send(JSON.stringify(monitoredList));
-	});
-	
-});
-
-responder.bind('tcp://*:5555', function(error) {
+var publisher = zmq.socket('pub');
+publisher.bind('tcp://*:5555', function(error) {
 	if(error) {
 		console.log(error);
+		process.exit(0);
 	}
 	else {
-		console.log("Listening port 5555...");
+		console.log("Binding on port 5555...");
 	}
 });
 
 var getMonitoredProcesses = function(sendList) {
-	var mainDir = '/tmp/process-manager';
+	var mainDir = '/tmp/process-manager/';
 	var apps = [];
 
-	fs.readdir(mainDir, function(error, folders) {
-		if (error) {
-			console.log(error);
+	var readDir = function(done, folder) {
+		if(folder == undefined) {
+			folder = "";
 		}
-		createTree(folders);
-	});
-
-	var createTree = function(folders) {
-		_.each(folders, function(folder) {
-			readFileNames(folder,function(folderName, fileNames) {
-				apps.push({id: folderName, pids: fileNames});								
-			});
-		});
-	};
-
-	var readFileNames = function(folderName, done) {
-		fs.readdir(mainDir + '/' + folderName, function(error, fileNames) {
+		fs.readdir(mainDir + folder, function(error, dirContent) {
 			if (error) {
 				console.log(error);
 			}
-			done(folderName, fileNames);
+			done(dirContent);
 		});
 	};
 
+	var createTree = function(folders) {
+		_.each(folders, function(folder) {
+			readDir(function(fileNames) {
+				apps.push({id: folder, pids: fileNames});								
+			}, folder);
+		});
+	};
+	
+	readDir(function(folders) {
+		createTree(folders);
+	});
+
 	setTimeout(function() {
-		console.log(apps);
 		sendList(apps);
 	}, 3000);
+	
 };
+
+setInterval(function() {
+	getMonitoredProcesses(function(monitoredList) {		
+		publisher.send(JSON.stringify(monitoredList));
+	});
+}, 10000);

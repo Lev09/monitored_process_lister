@@ -1,11 +1,10 @@
 var zmq = require('zmq');
-var requester = zmq.socket('req');
+var subscriber = zmq.socket('sub');
 
-requester.on('message', function(reply) {
-	console.log('monitored process list ' + reply.toString());
-	requester.close();
+subscriber.on('message', function(msg) {
+	console.log('process list ' + msg.toString());
 });
 
-requester.connect('tcp://localhost:5555');
-
-requester.send("get process list");
+subscriber.connect('tcp://localhost:5555');
+subscriber.subscribe('');
+console.log('listening port 5555');
