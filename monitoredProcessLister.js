@@ -1,20 +1,26 @@
 var zmq = require('zmq');
 var fs = require('fs');
 var _ = require('underscore');
+var argv = require('optimist')
+.default({
+	bind: 'tcp://*:5555',
+	tmpFolder: '/tmp/process-manager/'
+}).argv;
+
 
 var publisher = zmq.socket('pub');
-publisher.bind('tcp://*:5555', function(error) {
+publisher.bind(argv.bind, function(error) {
 	if(error) {
 		console.log(error);
 		process.exit(0);
 	}
 	else {
-		console.log("Binding on port: 5555");
+		console.log("Binding on " + argv.bind);
 	}
 });
 
 var getMonitoredProcesses = function(sendList) {
-	var mainDir = '/tmp/process-manager/';
+	var mainDir = argv.tmpFolder;
 	var apps = [];
 
 	var readDir = function(done, folder) {
