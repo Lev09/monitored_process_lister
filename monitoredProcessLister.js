@@ -4,7 +4,7 @@ var _ = require('underscore');
 var argv = require('optimist')
 .default({
 	bind: 'tcp://*:5555',
-	tmpFolder: '/tmp/process-manager/'
+	tmpFolder: '/tmp/process_manager/'
 }).argv;
 
 
